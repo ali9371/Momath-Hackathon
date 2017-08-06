@@ -1,4 +1,6 @@
-# Momath-Hackathon-2017-
+# Momath-Hackathon-2017:Eulerian (E)unites
+(^the E is silent)
+
 Our Math Square project
 
 Members: Angie Li, David Xue, Yuki Fang, Davin Lin
