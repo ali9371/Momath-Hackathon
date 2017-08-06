@@ -1,0 +1,268 @@
+import P5Behavior from 'p5beh';
+
+
+const pb = new P5Behavior();
+function point(x,y,boolean,on){
+    this.x =x;
+    this.y = y;
+    this.boolean = false;
+    this.on = false;
+}
+
+function line(x1,y1,x2,y2,boolean){
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    this.boolean = false;
+}
+
+
+var amount = 7;
+var array = []; //holds the coordinates of the points/nodes
+var arrghost = []; //point array
+var linecoor = [] //holds the line as objects
+
+
+for (let a = 0 ; a<amount; a++){
+    arrghost.push({});
+    arrghost[a] = new point (0,0);
+}
+
+
+
+
+for (let i=0; i < amount; i++){
+    let loopc=true;
+    let dummy = [];
+    let checker = false;
+    //to make sure coordinates do not repeat
+    while (loopc == true){
+        let xp= Math.round(Math.random()*576);
+        dummy.push(xp);
+        let yp = Math.round(Math.random()*576);
+        dummy.push(yp);
+        for (let j = 0; j<array.length;j++){
+            if (dummy<=array[j].xp + 30 && dummy >= array[j].xp - 30){
+                checker=true;
+                break 
+            }
+        }
+        if (checker == false){
+            loopc = false;
+        }
+    }
+    array.push([xp,yp]);
+
+}
+
+//makes nodes
+for (let b = 0; b < amount; b++){
+    arrghost[b].xp = array[b][0];
+    arrghost[b].yp = array[b][1];
+}
+
+
+//makes lines
+for (let n = 0; n<array.length-1; n++){
+    for (let k=n+1; k <array.length; k++){
+        linecoor.push([arrghost[n],arrghost[k] ]) 
+        }
+    } 
+
+    //hexagon code
+
+    var hexnodes=[];   
+    var hexline=[]; 
+    var s=200;
+    var a =s/2;
+    var b=1.732050808*a;
+    //0 = x1; 1 = y1; 2 = x2; 3 = y3; 4 = boolean; 5 = color 6 = boolean #2
+    // circle:  2,3 =size  6 = boolean to check if it's on a node
+    hexline.push([263-a,263-b,263+a,263-b,0,"red",0]);
+    hexnodes.push([263-a,263-b,25,25,0,"blue",0]);
+    hexnodes.push([263+a,263-b,25,25,0,"red",0]);
+
+    hexline.push([263+a,263-b,263+s,263,0,"red",0]);
+    hexnodes.push([263+a,263-b,25,25,0,"red",0]);
+    hexnodes.push([263+s,263,25,25,0,"red",0]);
+
+    hexline.push([263+s,263,263+a,263+b,0,"red",0]);
+    hexnodes.push([263+s,263,25,25,0,"red",0]);
+    hexnodes.push([263+a,263+b,25,25,0,"red",0]);    
+
+    hexline.push([263+a,263+b,263-a,263+b,0,"red",0]);
+    hexnodes.push([263+a,263+b,25,25,0,"red",0]);
+    hexnodes.push([263-a,263+b,25,25,0,"red",0]);    
+
+    hexline.push([263-a,263+b,263-s,263,0,"red",0]);
+    hexnodes.push([263-a,263+b,25,25,0,"red",0]);
+    hexnodes.push([263-s,263,25,25,0,"red",0]);    
+
+    hexline.push([263-s,263,263-a,263-b,0,"red",0]);
+    hexnodes.push([263-s,263,25,25,0,"red",0]);
+    hexnodes.push([263-a,263-b,25,25,0,"red",0]);    
+    
+    hexline.push([263-a,263-b,263+s,263,0,"red",0]);
+    hexline.push([263+s,263,263-a,263+b,0,"red",0]);
+    
+
+    hexline.push([263-a,263+b,263-a,263-b,0,"red",0]);
+    
+    
+    hexline.push([263+a,263-b,263+a,263+b,0,"red",0]);
+    
+    hexline.push([263+a,263+b,263-s,263,0,"red",0]);
+    
+    hexline.push([263-s,263,263+a,263-b,0,"red",0]);
+
+var start = 1;
+pb.draw = function (floor, p) {
+    this.clear();
+
+    if (start == 1){
+        for (let i = 0; i<hexline.length;i++){
+            if (hexline[i][4]==1 && hexline[i][6]==1){
+                hexline[i][5]='green';
+
+
+            }
+            
+            this.stroke(hexline[i][5]);
+            this.line(hexline[i][0],hexline[i][1],hexline[i][2],hexline[i][3]);
+        }
+
+        
+
+        for (let i = 0; i<hexnodes.length;i++){
+            if (hexnodes[i][4]==1){
+                hexnodes[i][5]='green';
+                }    
+            this.fill(hexnodes[i][5]);
+
+            this.ellipse(hexnodes[i][0],hexnodes[i][1],hexnodes[i][2],hexnodes[i][3]);
+
+            }
+        
+    //turns lines green
+        for (let plo = 0; plo<hexline.length; plo++){
+            for (let lp =0; lp<hexnodes.length; lp++){
+
+                if (hexnodes[lp][0]==hexline[plo][0] && hexnodes[lp][1]==hexline[plo][1]){
+                    if (hexnodes[lp][4]==1){
+                        hexline[plo][4]=1;
+                        
+                    }
+                }
+
+                else if (hexnodes[lp][0]==hexline[plo][2] && hexnodes[lp][1]==hexline[plo][3]){
+                    if (hexnodes[lp][4]==1){
+                        hexline[plo][6] =1;
+                        
+                    }
+                }
+            }
+        }
+
+
+
+        for (let user1 of floor.users) {
+            pb.drawUser(user1);
+
+
+            for(let mo =0; mo < hexnodes.length;mo++){
+                if (user1.x<= hexnodes[mo][0]+25 && user1.x>= hexnodes[mo][0]-25 && user1.y<= hexnodes[mo][1]+25 && user1.y>= hexnodes[mo][1]-25){
+                    hexnodes[mo][4] = 1;
+                    hexnodes[mo][6] = 1;
+                    }
+                }    
+            for(let no =0; no < hexnodes.length;no++){
+                if (user1.x<= hexnodes[no][0]+25 && user1.x>= hexnodes[no][0]-25 && user1.y<= hexnodes[no][1]+25 && user1.y>= hexnodes[no][1]-25){
+                    hexnodes[no][6] = 1;
+                    }
+                    
+                else {
+                    hexnodes[no][6]= 0
+                    hexnodes[no][4]=0;
+                }
+            }
+
+        }
+
+    }
+
+
+            
+
+
+    if (start ==0){    
+        //sets up nodes
+        for (let m = 0 ; m<array.length; m++){ 
+    
+        
+                if (arrghost[m].on == true){ 
+                    this.fill("red");
+                }
+                else {
+                    this.fill("yellow");
+                }
+                this.ellipse(arrghost[m].xp,arrghost[m].yp,25,25);    
+                
+        }
+        
+        //sets up lines
+        for (let f = 0; f < linecoor.length; f++){
+            if (linecoor[f][0].boolean==true && linecoor[f][1].boolean == true){
+                linecoor[f].boolean = true;
+            }
+            if (linecoor[f][0].on == true){
+                linecoor[f][1].boolean=false;
+            }
+
+            if (linecoor[f][1].on == true){
+                linecoor[f][0].boolean=false;
+            }        
+            if (linecoor[f].boolean == true){
+                this.stroke('green');
+            }
+            else{
+                this.stroke('#ffff7D');
+            }
+            this.line(linecoor[f][0].xp, linecoor[f][0].yp,linecoor[f][1].xp,linecoor[f][1].yp);
+
+        }
+
+        //detects users
+        for (let user1 of floor.users) {
+            pb.drawUser(user1);
+            for (let p = 0; p < amount; p++){
+                if (user1.x <= arrghost[p].xp +25 && user1.x >= arrghost[p].xp -25 && user1.y <= arrghost[p].yp +25&&user1.y >= arrghost[p].yp -25 ){
+                    arrghost[p].boolean = true;
+                    arrghost[p].on = true;
+                }
+            }
+
+            for (let p = 0; p < amount; p++){
+                if (user1.x <= arrghost[p].xp +25 && user1.x >= arrghost[p].xp -25 && user1.y <= arrghost[p].yp +25&&user1.y >= arrghost[p].yp -25 ){
+                    arrghost[p].on = true;
+                }
+                else {
+                    arrghost[p].on = false;
+                }
+            }   
+        }
+    }
+};
+
+
+
+export const behavior = {
+
+  title: "Path",
+  init: pb.init.bind(pb),
+  frameRate: 'sensors',
+  render: pb.render.bind(pb),
+  numGhosts: 1
+
+};
+export default behavior;
